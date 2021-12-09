@@ -56,7 +56,7 @@
                 <ui:repeat value="${resultBean.resultList}" id="point" var="point">
                     <circle cx="${150 + point.x / 4.0 * 100}"
                             cy="${150 - point.y / 4.0 * 100}"
-                            r="3"
+                            r="${3 * resultBean.isPointer}"
                             fill='${point.result ? "green" : "red"}'/>
                 </ui:repeat>
             </svg>

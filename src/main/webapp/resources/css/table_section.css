@@ -18,6 +18,22 @@
     /*text-align: center;*/
 }
 
+.update{
+    font-size: 19px;
+    font-family: 'Open Sans Condensed', sans-serif;
+    background: white;
+    width: 100px;
+    height: 35px;
+    border-radius: 10px;
+    position: relative;
+    right: 15%;
+    alignment: center;
+}
+
+.update:hover{
+    color: #D0B1E5;
+}
+
 svg text{
     color: black;
 }

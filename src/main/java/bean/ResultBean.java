@@ -1,6 +1,7 @@
 package bean;
 
 import entity.Result;
+import utils.DataBaseManager;
 import utils.HitChecker;
 import utils.Validator;
 
@@ -25,6 +26,7 @@ public class ResultBean {
     private Validator validator = new Validator();
     private List<Result> resultList = new ArrayList<>();
     private int isDrown;
+    private DataBaseManager dataBaseManager = new DataBaseManager();
 
     public void addClick(){
         System.out.println(clickResult);
@@ -36,8 +38,8 @@ public class ResultBean {
         if (validator.checkR(clickResult) == ""){
             coordinatesToValues(clickResult);
             makeResult(clickResult);
-//            newResult.setX(clickResult.getX());
-//            newResult.setY(clickResult.getY());
+            DataBaseManager.connect();
+            DataBaseManager.addBean(clickResult);
             resultList.add(clickResult);
             clickResult = new Result();
             saveSubmitValues(newResult.getX(), newResult.getY(), newResult.getR());
@@ -62,18 +64,21 @@ public class ResultBean {
         if ((newResult.getX() != null) && (newResult.getY() != null) && (newResult.getR() != null)) {
 //            isDrown = 1;
             if (validator.validate(newResult)) {
-
+                DataBaseManager.connect();
                 makeResult(newResult);
+                DataBaseManager.addBean(newResult);
                 resultList.add(newResult);
                 saveSubmitValues(newResult.getX(), newResult.getY(), newResult.getR());
-
                 System.out.println("addResultMethod");
-
             }
             else {
                 newResult.setR(4.0f);
             }
         }
+    }
+
+    public void update(){
+        DataBaseManager.load(resultList);
     }
 
     public void makeClickErrors() {
@@ -97,6 +102,7 @@ public class ResultBean {
 
 
     public void addCheck() {
+        isPointer = 1;
         if (validator.validateR(newResult)) {
             isDrown = 1;
             if (clickResult.getX() != null && clickResult.getY() != null) addClick();
@@ -137,6 +143,8 @@ public class ResultBean {
         xError = "";
         yError = "";
         rError = "";
+//        isDrown = 0;
+        isPointer = 0;
     }
 
 
