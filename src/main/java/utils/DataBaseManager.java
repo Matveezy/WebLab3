@@ -11,7 +11,7 @@ import java.util.List;
 public class DataBaseManager {
     private static final String DB_URL = "jdbc:oracle:thin:@localhost:1521:orbis";
     private static final String USER = "s312762";
-    private static final String PASS = "zza391";
+    private static final String PASS = "*********";
     private static Connection connection = null;
     private static Statement statement = null;
     private static boolean connected;
