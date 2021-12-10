@@ -1,6 +1,9 @@
 package entity;
 
 
+import utils.DataBaseManager;
+
+import javax.faces.context.FacesContext;
 import java.util.Objects;
 
 public class Result {
@@ -10,6 +13,15 @@ public class Result {
     private String currentTime;
     private long executionTime;
     private boolean result;
+    private FacesContext facesContext = FacesContext.getCurrentInstance();
+    private String session_id =facesContext.getExternalContext().getSessionId(false);
+    public String getSession_id() {
+        return session_id;
+    }
+
+    public void setSession_id(String session_id) {
+        this.session_id = session_id;
+    }
 
     public Float getX() {
         return x;

@@ -7,6 +7,7 @@ import utils.Validator;
 
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +39,9 @@ public class ResultBean {
         if (validator.checkR(clickResult) == ""){
             coordinatesToValues(clickResult);
             makeResult(clickResult);
-            DataBaseManager.connect();
-            DataBaseManager.addBean(clickResult);
+//            DataBaseManager.connect();
             resultList.add(clickResult);
+            DataBaseManager.addBean(clickResult);
             clickResult = new Result();
             saveSubmitValues(newResult.getX(), newResult.getY(), newResult.getR());
         }
@@ -64,10 +65,11 @@ public class ResultBean {
         if ((newResult.getX() != null) && (newResult.getY() != null) && (newResult.getR() != null)) {
 //            isDrown = 1;
             if (validator.validate(newResult)) {
-                DataBaseManager.connect();
+//                DataBaseManager.connect();
                 makeResult(newResult);
-                DataBaseManager.addBean(newResult);
                 resultList.add(newResult);
+                DataBaseManager.addBean(newResult);
+
                 saveSubmitValues(newResult.getX(), newResult.getY(), newResult.getR());
                 System.out.println("addResultMethod");
             }
@@ -102,7 +104,7 @@ public class ResultBean {
 
 
     public void addCheck() {
-        isPointer = 1;
+        isPointer =1;
         if (validator.validateR(newResult)) {
             isDrown = 1;
             if (clickResult.getX() != null && clickResult.getY() != null) addClick();
@@ -143,7 +145,7 @@ public class ResultBean {
         xError = "";
         yError = "";
         rError = "";
-//        isDrown = 0;
+        isDrown = 0;
         isPointer = 0;
     }
 
@@ -221,6 +223,24 @@ public class ResultBean {
     }
 
     public List<Result> getResultList() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        String id = facesContext.getExternalContext().getSessionId(false);
+        List<Result> resId = new ArrayList<>();
+//        DataBaseManager.connect();
+        DataBaseManager.load(resultList);
+
+//        DataBaseManager.load(resultList);
+        if (resultList.size()>0) {
+            for (Result val : resultList) {
+                if ((val.getSession_id().equals(id)))
+                {
+                    resId.add(val);
+                }
+            }
+            return resId;
+        }
+//        DataBaseManager.connect();
+//        DataBaseManager.load(resultList);
         return resultList;
     }
 

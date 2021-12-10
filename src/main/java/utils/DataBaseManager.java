@@ -2,6 +2,8 @@ package utils;
 
 import entity.Result;
 
+import javax.faces.context.FacesContext;
+import javax.faces.view.facelets.FaceletContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,9 @@ public class DataBaseManager {
     private static Statement statement = null;
     private static boolean connected;
 
+    public DataBaseManager(){
+        DataBaseManager.connect();
+    }
     public static boolean connect() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -38,7 +43,9 @@ public class DataBaseManager {
     }
 
     public static boolean addBean(Result result) {
-        String select = "INSERT INTO RESULTS (x, y, r, current_time, execution_time, is_hit) VALUES (?, ?, ?, ?, ?, ?)";
+        String select = "INSERT INTO RESULTS (x, y, r, current_time, execution_time, is_hit , session_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        String id = facesContext.getExternalContext().getSessionId(false);
         try{
             PreparedStatement preparedStatement = connection.prepareStatement(select);
             preparedStatement.setFloat(1, result.getX());
@@ -47,6 +54,7 @@ public class DataBaseManager {
             preparedStatement.setString(4, result.getCurrentTime());
             preparedStatement.setFloat(5, result.getExecutionTime());
             preparedStatement.setBoolean(6, result.isResult());
+            preparedStatement.setString(7,id);
             if (preparedStatement.executeUpdate()!=0) return true;
         } catch (SQLException e){
             System.out.println("Ошибка при добавлении бина в базу" + e.getMessage());
@@ -57,8 +65,12 @@ public class DataBaseManager {
     }
 
     public static void load(List<Result> list){
+//        DataBaseManager.connect();
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        String id = facesContext.getExternalContext().getSessionId(false);
         boolean flag;
-        String request = "SELECT * from RESULTS";
+        String request = "SELECT * from RESULTS  WHERE SESSION_ID = '" + id +"'"; ;
+//        String request = "SELECT * from RESULTS";
         try{
             ResultSet resultSet =getStatement().executeQuery(request);
             while (resultSet.next()) {
@@ -69,6 +81,7 @@ public class DataBaseManager {
                 String currentTime = resultSet.getString("current_time");
                 long exTime = resultSet.getLong("execution_time");
                 boolean isHit = resultSet.getBoolean("is_hit");
+                String session = resultSet.getString("SESSION_ID");
                 Result result = new Result();
                 if (valX(corX) && valY(corY) && valR(corR)) {
                     result.setX(corX);
@@ -77,6 +90,7 @@ public class DataBaseManager {
                     result.setCurrentTime(currentTime);
                     result.setExecutionTime(exTime);
                     result.setResult(isHit);
+                    result.setSession_id(session);
                     for (Result vals : list) {
                         if (vals.equals(result)) {
                             flag = false;
@@ -87,7 +101,7 @@ public class DataBaseManager {
                 }
             }
         } catch (Exception e){
-            System.out.println("Ex in load block!");
+            System.out.println("Ex in load block!" + e.getMessage());
         }
     }
     public static boolean valX(Float x){
