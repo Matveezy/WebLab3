@@ -11,14 +11,16 @@ import java.util.List;
 public class DataBaseManager {
     private static final String DB_URL = "jdbc:oracle:thin:@localhost:1521:orbis";
     private static final String USER = "s312762";
-    private static final String PASS = "*********";
+    private static final String PASS = "zza391";
     private static Connection connection = null;
     private static Statement statement = null;
     private static boolean connected;
 
-    public DataBaseManager(){
+    static {
         DataBaseManager.connect();
+
     }
+
     public static boolean connect() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -46,7 +48,7 @@ public class DataBaseManager {
         String select = "INSERT INTO RESULTS (x, y, r, current_time, execution_time, is_hit , session_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         FacesContext facesContext = FacesContext.getCurrentInstance();
         String id = facesContext.getExternalContext().getSessionId(false);
-        try{
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(select);
             preparedStatement.setFloat(1, result.getX());
             preparedStatement.setFloat(2, result.getY());
@@ -54,25 +56,23 @@ public class DataBaseManager {
             preparedStatement.setString(4, result.getCurrentTime());
             preparedStatement.setFloat(5, result.getExecutionTime());
             preparedStatement.setBoolean(6, result.isResult());
-            preparedStatement.setString(7,id);
-            if (preparedStatement.executeUpdate()!=0) return true;
-        } catch (SQLException e){
+            preparedStatement.setString(7, id);
+            if (preparedStatement.executeUpdate() != 0) return true;
+        } catch (SQLException e) {
             System.out.println("Ошибка при добавлении бина в базу" + e.getMessage());
-        } catch (ClassCastException e){
+        } catch (ClassCastException e) {
             System.out.println("ClassCastException при добавлении в базу");
         }
         return false;
     }
 
-    public static void load(List<Result> list){
-//        DataBaseManager.connect();
+    public static void load(List<Result> list) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         String id = facesContext.getExternalContext().getSessionId(false);
         boolean flag;
-        String request = "SELECT * from RESULTS  WHERE SESSION_ID = '" + id +"'"; ;
-//        String request = "SELECT * from RESULTS";
-        try{
-            ResultSet resultSet =getStatement().executeQuery(request);
+        String request = "SELECT * from RESULTS  WHERE SESSION_ID = '" + id + "'";
+        try {
+            ResultSet resultSet = getStatement().executeQuery(request);
             while (resultSet.next()) {
                 flag = true;
                 float corX = resultSet.getFloat("x");
@@ -100,35 +100,36 @@ public class DataBaseManager {
                     if (flag) list.add(result);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Ex in load block!" + e.getMessage());
         }
     }
-    public static boolean valX(Float x){
-        if ((x==null))  return false;
+
+    public static boolean valX(Float x) {
+        if ((x == null)) return false;
         else return true;
     }
 
-    public static boolean valY(Float y){
-        if ((y==null)) return false;
+    public static boolean valY(Float y) {
+        if ((y == null)) return false;
         else return true;
     }
 
-    public static boolean valR(Float r){
-        if ((r==null)) return false;
+    public static boolean valR(Float r) {
+        if ((r == null)) return false;
         else return true;
     }
 
-    public static boolean clear(){
+    public static boolean clear() {
         String request = "TRUNCATE TABLE RESULTS";
         execute(request);
         return true;
     }
 
-    public static boolean execute(String request){
-        try{
+    public static boolean execute(String request) {
+        try {
             if (statement.execute(request)) return true;
-        } catch (SQLException e ){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return false;

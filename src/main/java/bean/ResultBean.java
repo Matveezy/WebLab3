@@ -29,27 +29,20 @@ public class ResultBean {
     private int isDrown;
     private DataBaseManager dataBaseManager = new DataBaseManager();
 
-    public void addClick(){
+    public void addClick() {
         System.out.println(clickResult);
         clickResult.setR(newResult.getR());
 
         makeClickErrors();
         System.out.println(clickResult);
-//        newResult.setR(4.0f);
-        if (validator.checkR(clickResult) == ""){
+        if (validator.checkR(clickResult) == "") {
             coordinatesToValues(clickResult);
             makeResult(clickResult);
-//            DataBaseManager.connect();
             resultList.add(clickResult);
             DataBaseManager.addBean(clickResult);
             clickResult = new Result();
             saveSubmitValues(newResult.getX(), newResult.getY(), newResult.getR());
         }
-        else {
-//            newResult.setR(4.0f);
-        }
-//        System.out.println("click" + clickResult);
-//        System.out.println(newResult);
     }
 
     public int getIsDrown() {
@@ -63,23 +56,20 @@ public class ResultBean {
     public void addResult() {
         makeSubmitErrors();
         if ((newResult.getX() != null) && (newResult.getY() != null) && (newResult.getR() != null)) {
-//            isDrown = 1;
             if (validator.validate(newResult)) {
-//                DataBaseManager.connect();
                 makeResult(newResult);
                 resultList.add(newResult);
                 DataBaseManager.addBean(newResult);
 
                 saveSubmitValues(newResult.getX(), newResult.getY(), newResult.getR());
                 System.out.println("addResultMethod");
-            }
-            else {
+            } else {
                 newResult.setR(4.0f);
             }
         }
     }
 
-    public void update(){
+    public void update() {
         DataBaseManager.load(resultList);
     }
 
@@ -91,8 +81,8 @@ public class ResultBean {
 
 
     public void coordinatesToValues(Result result) {
-        result.setX((float) ((result.getR() * (result.getX()-150)) /100) * (4.0f / result.getR()));
-        result.setY((float) ((result.getR() * (150 - result.getY())) /100) * (4.0f / result.getR()));
+        result.setX((float) ((result.getR() * (result.getX() - 150)) / 100) * (4.0f / result.getR()));
+        result.setY((float) ((result.getR() * (150 - result.getY())) / 100) * (4.0f / result.getR()));
     }
 
 
@@ -104,7 +94,7 @@ public class ResultBean {
 
 
     public void addCheck() {
-        isPointer =1;
+        isPointer = 1;
         if (validator.validateR(newResult)) {
             isDrown = 1;
             if (clickResult.getX() != null && clickResult.getY() != null) addClick();
@@ -117,7 +107,6 @@ public class ResultBean {
         System.out.println("y = " + newResult.getY());
         System.out.println("r = " + newResult.getR());
     }
-
 
 
     public void saveSubmitValues(Float x, Float y, Float r) {
@@ -134,6 +123,7 @@ public class ResultBean {
         result.setExecutionTime((System.nanoTime() - start) / 1000);
         System.out.println("make result!");
     }
+
     public void defaultResult() {
         newResult.setX(null);
         newResult.setY(null);
@@ -226,21 +216,15 @@ public class ResultBean {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         String id = facesContext.getExternalContext().getSessionId(false);
         List<Result> resId = new ArrayList<>();
-//        DataBaseManager.connect();
         DataBaseManager.load(resultList);
-
-//        DataBaseManager.load(resultList);
-        if (resultList.size()>0) {
+        if (resultList.size() > 0) {
             for (Result val : resultList) {
-                if ((val.getSession_id().equals(id)))
-                {
+                if ((val.getSession_id().equals(id))) {
                     resId.add(val);
                 }
             }
             return resId;
         }
-//        DataBaseManager.connect();
-//        DataBaseManager.load(resultList);
         return resultList;
     }
 
